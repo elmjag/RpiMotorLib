@@ -109,11 +109,13 @@ from RpiMotorLib import rpi_pservo_lib
 myservotest  = rpi_pservo_lib.ServoPigpio("Sone", 50, 1000, 2000)
 ```
 
-The class takes four parameters on init
+The class takes six parameters on init
 1. name, type=string, default=servoY,  
 2. Freq, type=int, default=50, help=control freq of servo in Hz
-3. y_one, type=float, default = 1000 ,help=pulse width min in uS of servo % for 0 degrees
-4. y_two type=float, default = 2000 , help=pulse width max in uS of servo % for 180 degrees
+3. y_one, type=float, default = 1000, help=pulse width min in uS of servo % for 0 degrees
+4. y_two, type=float, default = 2000, help=pulse width max in uS of servo % for 180 degrees
+5. pigpio_addr, type=string default=None, help=host name where pigpio is running
+6. pigpio_port, type=int default=None, help=port number where pigpio is running
 
 y_one and y-two are used by methods numbered 3 and 4. 
 

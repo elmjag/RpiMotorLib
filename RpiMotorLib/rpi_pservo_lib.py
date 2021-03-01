@@ -26,7 +26,8 @@ class ServoPigpio(object):
     5. servo_move_step
     """
 
-    def __init__(self, name="servoY", freq=50, y_one=1000, y_two=2000):
+    def __init__(self, name="servoY", freq=50, y_one=1000, y_two=2000,
+                 pigpio_addr=None, pigpio_port=None):
         """ init method for class
         4 inputs
         (1) name, default=servoY, type=string, help=name of instance
@@ -41,6 +42,20 @@ class ServoPigpio(object):
         self.freq = freq
         self.y_one = y_one
         self.y_two = y_two
+        self.pigpio_addr = pigpio_addr
+        self.pigpio_port = pigpio_port
+
+    def _get_pi_servo(self):
+        args = {}
+
+        if self.pigpio_addr is not None:
+            args["host"] = self.pigpio_addr
+
+        if self.pigpio_port is not None:
+            args["port"] = self.pigpio_port
+
+        return pigpio.pi(**args)
+
 
     def servo_sweep(self, servo_pin=7, center=1500, minduty=1000, maxduty=2000,
                     delay=0.5, verbose=False, initdelay=.05, sweeplen=1000000):
@@ -64,7 +79,7 @@ class ServoPigpio(object):
         """
         if verbose:
             print("RpiMotorLib: Servo Sweep running , press ctrl+c to quit")
-        pi_servo = pigpio.pi()  # Connect to local Pi.
+        pi_servo = self._get_pi_servo()
         if not pi_servo.connected:
             print("RpiMotorLib : failed to connect to pigpio Daemon")
             exit()
@@ -125,7 +140,7 @@ class ServoPigpio(object):
          (5) initdelay, type=float, default 50mS
          help= A delay after Gpio setup and before servo moves
         """
-        pi_servo = pigpio.pi()
+        pi_servo = self._get_pi_servo()
         pi_servo.set_mode(servo_pin, pigpio.OUTPUT)
         time.sleep(initdelay)
         pi_servo.set_PWM_frequency(servo_pin, self.freq)
@@ -181,7 +196,7 @@ class ServoPigpio(object):
         if start > end:
             stepsize = (stepsize)*-1
 
-        pi_servo = pigpio.pi()
+        pi_servo = self._get_pi_servo()
         pi_servo.set_mode(servo_pin, pigpio.OUTPUT)
         time.sleep(initdelay)
         pi_servo.set_PWM_frequency(servo_pin, self.freq)
